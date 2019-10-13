@@ -1,6 +1,8 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
+import AddMessage from "./components/AddMessage";
+import ListMessages from "./components/ListMessages";
 
 function App() {
   return (
@@ -18,6 +20,8 @@ function App() {
         >
           Learn React
         </a>
+        <AddMessage/>
+        <ListMessages/>
       </header>
     </div>
   );
