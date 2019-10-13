@@ -4,7 +4,9 @@
   "private": true,
   "dependencies": {
     "@azure/service-bus": "^1.1.0",
+    "@craco/craco": "^5.5.0",
     "bootstrap": "^4.3.1",
+    "config": "^3.2.3",
     "electron-is-dev": "^1.1.0",
     "react": "^16.10.2",
     "react-bootstrap": "^1.0.0-beta.14",
@@ -13,11 +15,11 @@
   },
   "main": "public/electron.js",
   "scripts": {
-    "dev": "react-scripts start",
-    "start": "concurrently \"cross-env BROWSER=none react-scripts start\" \"wait-on http://localhost:3000 && electron .\"",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "dev": "craco start",
+    "start": "concurrently \"cross-env BROWSER=none craco start\" \"wait-on http://localhost:3000 && electron .\"",
+    "build": "craco build",
+    "test": "craco test",
+    "eject": "craco eject"
   },
   "eslintConfig": {
     "extends": "react-app"
