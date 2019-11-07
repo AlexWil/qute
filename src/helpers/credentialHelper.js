@@ -50,4 +50,5 @@ async function addTokenToCache(token, tokenCache) {
 export async function storeCredentials(creds) {
     let credsAsJson = JSON.stringify(creds);
     store.set(key, credsAsJson);
+    console.log("stored creds");
 }

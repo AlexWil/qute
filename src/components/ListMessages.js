@@ -1,12 +1,12 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import * as msRestNodeAuth from "@azure/ms-rest-nodeauth";
 import {Button} from "react-bootstrap";
 import {storeCredentials, refreshCredentials} from '../helpers/credentialHelper';
-import {doSomethingWithCreds} from '../helpers/sbHelper';
+import {listNamespaces, readFirstMessage, getQueueDetails} from '../helpers/sbHelper';
 
 function ListMessages(props) {
 
-    const [body, setBody] = useState(
+    const [messageBody, setMessageBody] = useState(
         'dummy body'
     );
     const [messageId, setMessageId] = useState(
@@ -16,9 +16,22 @@ function ListMessages(props) {
         'dummy count'
     );
 
+    useEffect(() => {
+        async function fetchData() {
+            console.log("1");
+            let newCreds = await refreshCredentials();
+            const queueDetails = await getQueueDetails(newCreds, "sandbox");
+            setMessageCount(queueDetails.messageCount)
+        }
+        fetchData();
+    });
+
     async function updateInfo() {
         let newCreds = await refreshCredentials();
-        await doSomethingWithCreds(newCreds);
+        await listNamespaces(newCreds);
+        const message = await readFirstMessage(newCreds);
+        setMessageBody(message.body);
+        setMessageId(message.messageId);
     }
 
     async function beginAzureLogin() {
@@ -28,7 +41,7 @@ function ListMessages(props) {
 
     return (
         <div>
-            This is your first message: {body}
+            This is your first message: {messageBody}
             <br/>
             It has the following id: {messageId}
             <br/>

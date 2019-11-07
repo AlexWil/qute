@@ -7,6 +7,7 @@
     "@azure/ms-rest-nodeauth": "^2.0.5",
     "@azure/service-bus": "^1.1.0",
     "@craco/craco": "^5.5.0",
+    "adal-node": "^0.2.1",
     "bootstrap": "^4.3.1",
     "config": "^3.2.3",
     "electron-is-dev": "^1.1.0",
@@ -14,8 +15,7 @@
     "react": "^16.10.2",
     "react-bootstrap": "^1.0.0-beta.14",
     "react-dom": "^16.10.2",
-    "react-scripts": "3.2.0",
-    "adal-node": "latest"
+    "react-scripts": "3.2.0"
   },
   "main": "public/electron.js",
   "scripts": {
