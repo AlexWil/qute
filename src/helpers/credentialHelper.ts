@@ -1,4 +1,4 @@
-import {DeviceTokenCredentials} from "@azure/ms-rest-nodeauth";
+import {DeviceTokenCredentials, default as msRestNodeAuth} from "@azure/ms-rest-nodeauth";
 import {MemoryCache, TokenCache, TokenResponse} from "adal-node";
 import ElectronStore from "electron-store";
 import {DeviceTokenCredentialsDto} from '../interfaces/interfaces';
@@ -46,6 +46,11 @@ async function addTokenToCache(token: TokenResponse, tokenCache: TokenCache) {
             resolve(result);
         });
     });
+}
+
+export async function loginAndStoreCredentials(){
+    let deviceTokenCredentials = await msRestNodeAuth.interactiveLogin();
+    await storeCredentials(deviceTokenCredentials);
 }
 
 export async function storeCredentials(creds: DeviceTokenCredentials) {

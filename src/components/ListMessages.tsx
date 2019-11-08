@@ -1,28 +1,25 @@
 import React, {useEffect, useState} from 'react';
-import * as msRestNodeAuth from "@azure/ms-rest-nodeauth";
 import {Button} from "react-bootstrap";
-import {storeCredentials, refreshCreds} from '../helpers/credentialHelper';
+import { refreshCreds, loginAndStoreCredentials} from '../helpers/credentialHelper';
 import {listNamespaces, readFirstMessage, getQueueDetails} from '../helpers/sbHelper';
 
-function ListMessages(props) {
+function ListMessages() {
 
     const [messageBody, setMessageBody] = useState(
         'dummy body'
     );
-    const [messageId, setMessageId] = useState(
-        'dummy id'
-    );
-    const [messageCount, setMessageCount] = useState(
-        'dummy count'
-    );
+    const [messageId, setMessageId] = useState();
+    const [messageCount, setMessageCount] = useState(0);
 
     useEffect(() => {
         async function fetchData() {
             let newCreds = await refreshCreds();
             const queueDetails = await getQueueDetails(newCreds, "sandbox");
-            setMessageCount(queueDetails.messageCount)
+            setMessageCount(queueDetails.messageCount!)
         }
-        fetchData();
+        fetchData().then(r => {
+            console.log(r);
+        });
     });
 
     async function updateInfo() {
@@ -34,8 +31,7 @@ function ListMessages(props) {
     }
 
     async function beginAzureLogin() {
-        let deviceTokenCredentials = await msRestNodeAuth.interactiveLogin();
-        await storeCredentials(deviceTokenCredentials);
+        await loginAndStoreCredentials();
     }
 
     return (

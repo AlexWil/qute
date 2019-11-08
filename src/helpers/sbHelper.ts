@@ -2,6 +2,7 @@ import config from "config";
 import {ServiceBusManagementClient} from "@azure/arm-servicebus";
 import {ServiceBusClient} from "@azure/service-bus";
 import {DeviceTokenCredentials} from "@azure/ms-rest-nodeauth";
+import {SBQueue} from "@azure/arm-servicebus/esm/models";
 
 const subscriptionId: string = config.get('azure.subscriptionId');
 const resourceGroup: string = config.get('azure.resourceGroup');
@@ -27,7 +28,7 @@ export async function readFirstMessage(creds: DeviceTokenCredentials) {
     return peekedMessage[0];
 }
 
-export async function getQueueDetails(creds: DeviceTokenCredentials, queueName: string) {
+export async function getQueueDetails(creds: DeviceTokenCredentials, queueName: string): Promise<SBQueue> {
     const client = new ServiceBusManagementClient(creds, subscriptionId);
     const queues = await client.queues.listByNamespace(resourceGroup, namespace);
     const goodQueue = queues.filter(queue => queue.name === queueName);
