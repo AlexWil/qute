@@ -1,4 +1,4 @@
-import { Environment } from '@azure/ms-rest-azure-env';
+import {Environment} from '@azure/ms-rest-azure-env';
 
 export interface DeviceTokenCredentialsDto {
     clientId: string;

@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { Button } from 'react-bootstrap';
-import { refreshCreds, loginAndStoreCredentials } from '../helpers/credentialHelper';
-import { listNamespaces, readFirstMessage, getQueueDetails } from '../helpers/sbHelper';
+import React, {useEffect, useState} from 'react';
+import {Button} from 'react-bootstrap';
+import {refreshCreds, loginAndStoreCredentials} from '../helpers/credentialHelper';
+import {listNamespaces, readFirstMessage, getQueueDetails} from '../helpers/sbHelper';
 
 function ListMessages() {
     const [messageBody, setMessageBody] = useState('dummy body');

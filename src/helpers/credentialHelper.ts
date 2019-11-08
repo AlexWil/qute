@@ -1,7 +1,7 @@
-import { DeviceTokenCredentials, default as msRestNodeAuth } from '@azure/ms-rest-nodeauth';
-import { MemoryCache, TokenCache, TokenResponse } from 'adal-node';
+import {DeviceTokenCredentials, default as msRestNodeAuth} from '@azure/ms-rest-nodeauth';
+import {MemoryCache, TokenCache, TokenResponse} from 'adal-node';
 import ElectronStore from 'electron-store';
-import { DeviceTokenCredentialsDto } from '../interfaces/interfaces';
+import {DeviceTokenCredentialsDto} from '../interfaces/interfaces';
 
 const store = new ElectronStore();
 const key = 'credentials';

@@ -1,15 +1,15 @@
 import config from 'config';
-import { ServiceBusManagementClient } from '@azure/arm-servicebus';
-import { ServiceBusClient } from '@azure/service-bus';
-import { DeviceTokenCredentials } from '@azure/ms-rest-nodeauth';
-import { SBQueue } from '@azure/arm-servicebus/esm/models';
+import {ServiceBusManagementClient} from '@azure/arm-servicebus';
+import {ReceivedMessageInfo, ServiceBusClient} from '@azure/service-bus';
+import {DeviceTokenCredentials} from '@azure/ms-rest-nodeauth';
+import {SBQueue} from '@azure/arm-servicebus/esm/models';
 
 const subscriptionId: string = config.get('azure.subscriptionId');
 const resourceGroup: string = config.get('azure.resourceGroup');
 const namespace: string = config.get('azure.namespace');
 const authorizationRuleName: string = config.get('serviceBus.userName');
 
-export async function listNamespaces(creds: DeviceTokenCredentials) {
+export async function listNamespaces(creds: DeviceTokenCredentials): Promise<void> {
     const client = new ServiceBusManagementClient(creds, subscriptionId);
     client.namespaces.list().then(namespaces => {
         namespaces.map(ns => {
@@ -18,7 +18,7 @@ export async function listNamespaces(creds: DeviceTokenCredentials) {
     });
 }
 
-export async function readFirstMessage(creds: DeviceTokenCredentials) {
+export async function readFirstMessage(creds: DeviceTokenCredentials): Promise<ReceivedMessageInfo> {
     const client = new ServiceBusManagementClient(creds, subscriptionId);
     const namespacesListKeys = await client.namespaces.listKeys(resourceGroup, namespace, authorizationRuleName);
     const connectionString = namespacesListKeys.primaryConnectionString;
