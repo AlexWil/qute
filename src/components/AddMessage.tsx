@@ -1,6 +1,6 @@
 import React from 'react';
 
-function AddMessage() {
+function AddMessage(): JSX.Element {
     return (
         <div>
             <form>

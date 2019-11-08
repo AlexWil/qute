@@ -4,7 +4,7 @@ import './App.css';
 import AddMessage from './components/AddMessage';
 import ListMessages from './components/ListMessages';
 
-function App() {
+function App(): JSX.Element {
     return (
         <div className="App">
             <header className="App-header">
