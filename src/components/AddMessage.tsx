@@ -11,7 +11,6 @@ function AddMessage() {
                 <input type="submit" value="Submit" />
             </form>
         </div>
-
     );
 }
 

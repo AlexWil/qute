@@ -1,7 +1,7 @@
-import {DeviceTokenCredentials, default as msRestNodeAuth} from "@azure/ms-rest-nodeauth";
-import {MemoryCache, TokenCache, TokenResponse} from "adal-node";
-import ElectronStore from "electron-store";
-import {DeviceTokenCredentialsDto} from '../interfaces/interfaces';
+import { DeviceTokenCredentials, default as msRestNodeAuth } from '@azure/ms-rest-nodeauth';
+import { MemoryCache, TokenCache, TokenResponse } from 'adal-node';
+import ElectronStore from 'electron-store';
+import { DeviceTokenCredentialsDto } from '../interfaces/interfaces';
 
 const store = new ElectronStore();
 const key = 'credentials';
@@ -13,25 +13,25 @@ function generateCreds(deviceTokenCredentials: DeviceTokenCredentialsDto, tokenC
         deviceTokenCredentials.username,
         deviceTokenCredentials.tokenAudience,
         deviceTokenCredentials.environment,
-        tokenCache
+        tokenCache,
     );
 }
 
 async function generateTokenCache(creds: DeviceTokenCredentialsDto) {
-    let storedToken = creds.tokenCache._entries[0];
-    let tokenCache = new MemoryCache();
+    const storedToken = creds.tokenCache._entries[0];
+    const tokenCache = new MemoryCache();
     await addTokenToCache(storedToken, tokenCache);
     return tokenCache;
 }
 
 function readCredsFromStorage(): DeviceTokenCredentialsDto {
-    let deviceTokenCredentialsJson = store.get(key);
+    const deviceTokenCredentialsJson = store.get(key);
     return JSON.parse(deviceTokenCredentialsJson);
 }
 
 export async function refreshCreds() {
-    let storedCreds = readCredsFromStorage();
-    let tokenCache = await generateTokenCache(storedCreds);
+    const storedCreds = readCredsFromStorage();
+    const tokenCache = await generateTokenCache(storedCreds);
     return generateCreds(storedCreds, tokenCache);
 }
 
@@ -48,13 +48,13 @@ async function addTokenToCache(token: TokenResponse, tokenCache: TokenCache) {
     });
 }
 
-export async function loginAndStoreCredentials(){
-    let deviceTokenCredentials = await msRestNodeAuth.interactiveLogin();
+export async function loginAndStoreCredentials() {
+    const deviceTokenCredentials = await msRestNodeAuth.interactiveLogin();
     await storeCredentials(deviceTokenCredentials);
 }
 
 export async function storeCredentials(creds: DeviceTokenCredentials) {
-    let credsAsJson = JSON.stringify(creds);
+    const credsAsJson = JSON.stringify(creds);
     store.set(key, credsAsJson);
-    console.log("stored creds");
+    console.log('stored creds');
 }

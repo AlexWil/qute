@@ -1,8 +1,8 @@
-import config from "config";
-import {ServiceBusManagementClient} from "@azure/arm-servicebus";
-import {ServiceBusClient} from "@azure/service-bus";
-import {DeviceTokenCredentials} from "@azure/ms-rest-nodeauth";
-import {SBQueue} from "@azure/arm-servicebus/esm/models";
+import config from 'config';
+import { ServiceBusManagementClient } from '@azure/arm-servicebus';
+import { ServiceBusClient } from '@azure/service-bus';
+import { DeviceTokenCredentials } from '@azure/ms-rest-nodeauth';
+import { SBQueue } from '@azure/arm-servicebus/esm/models';
 
 const subscriptionId: string = config.get('azure.subscriptionId');
 const resourceGroup: string = config.get('azure.resourceGroup');
@@ -23,7 +23,7 @@ export async function readFirstMessage(creds: DeviceTokenCredentials) {
     const namespacesListKeys = await client.namespaces.listKeys(resourceGroup, namespace, authorizationRuleName);
     const connectionString = namespacesListKeys.primaryConnectionString;
     const serviceBusClient = ServiceBusClient.createFromConnectionString(connectionString!);
-    const queueClient = serviceBusClient.createQueueClient("sandbox");
+    const queueClient = serviceBusClient.createQueueClient('sandbox');
     const peekedMessage = await queueClient.peek();
     return peekedMessage[0];
 }

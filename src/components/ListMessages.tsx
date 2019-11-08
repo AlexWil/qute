@@ -1,21 +1,18 @@
-import React, {useEffect, useState} from 'react';
-import {Button} from "react-bootstrap";
-import { refreshCreds, loginAndStoreCredentials} from '../helpers/credentialHelper';
-import {listNamespaces, readFirstMessage, getQueueDetails} from '../helpers/sbHelper';
+import React, { useEffect, useState } from 'react';
+import { Button } from 'react-bootstrap';
+import { refreshCreds, loginAndStoreCredentials } from '../helpers/credentialHelper';
+import { listNamespaces, readFirstMessage, getQueueDetails } from '../helpers/sbHelper';
 
 function ListMessages() {
-
-    const [messageBody, setMessageBody] = useState(
-        'dummy body'
-    );
+    const [messageBody, setMessageBody] = useState('dummy body');
     const [messageId, setMessageId] = useState();
     const [messageCount, setMessageCount] = useState(0);
 
     useEffect(() => {
         async function fetchData() {
-            let newCreds = await refreshCreds();
-            const queueDetails = await getQueueDetails(newCreds, "sandbox");
-            setMessageCount(queueDetails.messageCount!)
+            const newCreds = await refreshCreds();
+            const queueDetails = await getQueueDetails(newCreds, 'sandbox');
+            setMessageCount(queueDetails.messageCount!);
         }
         fetchData().then(r => {
             console.log(r);
@@ -23,7 +20,7 @@ function ListMessages() {
     });
 
     async function updateInfo() {
-        let newCreds = await refreshCreds();
+        const newCreds = await refreshCreds();
         await listNamespaces(newCreds);
         const message = await readFirstMessage(newCreds);
         setMessageBody(message.body);
@@ -37,22 +34,16 @@ function ListMessages() {
     return (
         <div>
             This is your first message: {messageBody}
-            <br/>
+            <br />
             It has the following id: {messageId}
-            <br/>
+            <br />
             Your total amount of message is: {messageCount}
-            <br/>
-            <Button
-                variant="secondary"
-                onClick={updateInfo}
-            >
+            <br />
+            <Button variant="secondary" onClick={updateInfo}>
                 Update info
             </Button>
-            <br/>
-            <Button
-                variant="primary"
-                onClick={beginAzureLogin}
-            >
+            <br />
+            <Button variant="primary" onClick={beginAzureLogin}>
                 Login
             </Button>
         </div>
