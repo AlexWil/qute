@@ -1,11 +1,12 @@
 import {DeviceTokenCredentials} from "@azure/ms-rest-nodeauth";
-import {MemoryCache} from "adal-node";
-import Store from "electron-store";
+import {MemoryCache, TokenCache, TokenResponse} from "adal-node";
+import ElectronStore from "electron-store";
+import {DeviceTokenCredentialsDto} from '../interfaces/interfaces';
 
-const store = new Store();
+const store = new ElectronStore();
 const key = 'credentials';
 
-function generateCredentials(deviceTokenCredentials, tokenCache) {
+function generateCreds(deviceTokenCredentials: DeviceTokenCredentialsDto, tokenCache: TokenCache) {
     return new DeviceTokenCredentials(
         deviceTokenCredentials.clientId,
         deviceTokenCredentials.domain,
@@ -16,26 +17,26 @@ function generateCredentials(deviceTokenCredentials, tokenCache) {
     );
 }
 
-async function generateTokenCache(creds) {
+async function generateTokenCache(creds: DeviceTokenCredentialsDto) {
     let storedToken = creds.tokenCache._entries[0];
     let tokenCache = new MemoryCache();
     await addTokenToCache(storedToken, tokenCache);
     return tokenCache;
 }
 
-function readTokenFromStorage() {
-
+function readCredsFromStorage(): DeviceTokenCredentialsDto {
     let deviceTokenCredentialsJson = store.get(key);
     return JSON.parse(deviceTokenCredentialsJson);
 }
 
-export async function refreshCredentials() {
-    let storedToken = readTokenFromStorage();
-    let tokenCache = await generateTokenCache(storedToken);
-    return generateCredentials(storedToken, tokenCache);
+export async function refreshCreds() {
+    let storedCreds = readCredsFromStorage();
+    let tokenCache = await generateTokenCache(storedCreds);
+    return generateCreds(storedCreds, tokenCache);
 }
 
-async function addTokenToCache(token, tokenCache) {
+//replace with promisify?
+async function addTokenToCache(token: TokenResponse, tokenCache: TokenCache) {
     return new Promise((resolve, reject) => {
         tokenCache.add([token], (err, result) => {
             if (err) {
@@ -47,7 +48,7 @@ async function addTokenToCache(token, tokenCache) {
     });
 }
 
-export async function storeCredentials(creds) {
+export async function storeCredentials(creds: DeviceTokenCredentials) {
     let credsAsJson = JSON.stringify(creds);
     store.set(key, credsAsJson);
     console.log("stored creds");

@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import * as msRestNodeAuth from "@azure/ms-rest-nodeauth";
 import {Button} from "react-bootstrap";
-import {storeCredentials, refreshCredentials} from '../helpers/credentialHelper';
+import {storeCredentials, refreshCreds} from '../helpers/credentialHelper';
 import {listNamespaces, readFirstMessage, getQueueDetails} from '../helpers/sbHelper';
 
 function ListMessages(props) {
@@ -18,8 +18,7 @@ function ListMessages(props) {
 
     useEffect(() => {
         async function fetchData() {
-            console.log("1");
-            let newCreds = await refreshCredentials();
+            let newCreds = await refreshCreds();
             const queueDetails = await getQueueDetails(newCreds, "sandbox");
             setMessageCount(queueDetails.messageCount)
         }
@@ -27,7 +26,7 @@ function ListMessages(props) {
     });
 
     async function updateInfo() {
-        let newCreds = await refreshCredentials();
+        let newCreds = await refreshCreds();
         await listNamespaces(newCreds);
         const message = await readFirstMessage(newCreds);
         setMessageBody(message.body);
