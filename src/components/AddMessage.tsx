@@ -1,6 +1,6 @@
 import React from 'react';
 
-function AddMessage(props) {
+function AddMessage() {
     return (
         <div>
             <form>

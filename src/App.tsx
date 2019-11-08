@@ -20,7 +20,7 @@ function App() {
         >
           Learn React
         </a>
-        {/*<AddMessage/>*/}
+        <AddMessage/>
         <ListMessages/>
       </header>
     </div>
