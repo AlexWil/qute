@@ -7,10 +7,6 @@
     "@azure/ms-rest-nodeauth": "^2.0.5",
     "@azure/service-bus": "^1.1.0",
     "@craco/craco": "^5.5.0",
-    "@types/jest": "^24.0.22",
-    "@types/node": "^12.12.6",
-    "@types/react": "^16.9.11",
-    "@types/react-dom": "^16.9.4",
     "adal-node": "^0.2.1",
     "bootstrap": "^4.3.1",
     "config": "^3.2.3",
@@ -46,6 +42,11 @@
     ]
   },
   "devDependencies": {
+    "@types/config": "0.0.36",
+    "@types/jest": "^24.0.22",
+    "@types/node": "^12.12.6",
+    "@types/react": "^16.9.11",
+    "@types/react-dom": "^16.9.4",
     "concurrently": "^5.0.0",
     "cross-env": "^6.0.3",
     "electron": "^6.0.12",
