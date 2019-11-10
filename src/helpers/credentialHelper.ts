@@ -1,7 +1,16 @@
-import {DeviceTokenCredentials, default as msRestNodeAuth} from '@azure/ms-rest-nodeauth';
-import {MemoryCache, TokenCache, TokenResponse} from 'adal-node';
+import {DeviceTokenCredentials, interactiveLogin} from '@azure/ms-rest-nodeauth';
+import {MemoryCache, TokenCache, TokenResponse, ErrorResponse, Logging, LoggingLevel} from 'adal-node';
 import ElectronStore from 'electron-store';
 import {DeviceTokenCredentialsDto} from '../interfaces/interfaces';
+
+// const logLevel: LoggingLevel = 2;
+// Logging.setLoggingOptions({
+//     log: function(level, message, error) {
+//         console.log(`ADAL ${level} ${message} ${error}`);
+//     },
+//     level: logLevel,
+//     loggingWithPII: true,
+// });
 
 const store = new ElectronStore();
 const key = 'credentials';
@@ -32,8 +41,9 @@ function readCredsFromStorage(): DeviceTokenCredentialsDto {
     return JSON.parse(deviceTokenCredentialsJson);
 }
 
-export async function refreshCreds(): Promise<DeviceTokenCredentials> {
+export async function loadStoredCreds(): Promise<DeviceTokenCredentials> {
     const storedCreds = readCredsFromStorage();
+    console.log({storedCreds});
     const tokenCache = await generateTokenCache(storedCreds);
     return generateCreds(storedCreds, tokenCache);
 }
@@ -52,12 +62,59 @@ async function addTokenToCache(token: TokenResponse, tokenCache: TokenCache): Pr
 }
 
 export async function loginAndStoreCredentials(): Promise<void> {
-    const deviceTokenCredentials = await msRestNodeAuth.interactiveLogin();
+    const deviceTokenCredentials = await interactiveLogin();
+    console.log(deviceTokenCredentials);
     await storeCredentials(deviceTokenCredentials);
 }
 
-export async function storeCredentials(creds: DeviceTokenCredentials): Promise<void> {
+async function storeCredentials(creds: DeviceTokenCredentials): Promise<void> {
     const credsAsJson = JSON.stringify(creds);
     store.set(key, credsAsJson);
     console.log('stored creds');
+}
+
+export async function refreshCredentials(): Promise<void> {
+    const creds = await loadStoredCreds();
+    const clientId = creds.clientId;
+    const authority = (await creds.getToken())['_authority'];
+    const newAccessToken = await getNewAccessToken(creds);
+    console.log(newAccessToken);
+    if ((newAccessToken as ErrorResponse).error) {
+        console.log('ERROR', newAccessToken.error);
+    }
+    if ((newAccessToken as TokenResponse).tokenType) {
+        const newAccessTokenAsTokenResponse = newAccessToken as TokenResponse;
+        newAccessTokenAsTokenResponse._authority = authority;
+        newAccessTokenAsTokenResponse._clientId = clientId;
+        await clearTokenCache(creds.tokenCache);
+        await addTokenToCache(newAccessTokenAsTokenResponse, creds.tokenCache);
+    }
+    console.log(creds);
+    const credsAsJson = JSON.stringify(creds);
+    store.set(key, credsAsJson);
+    console.log('stored refreshed creds');
+}
+
+async function getNewAccessToken(creds: DeviceTokenCredentials): Promise<TokenResponse | ErrorResponse> {
+    const authContext = creds.authContext;
+    const token = await creds.getToken();
+    return new Promise((resolve, reject) => {
+        authContext.acquireTokenWithRefreshToken(token.refreshToken!, creds.clientId, token.resource, (err, res) => {
+            if (err) reject(err);
+            console.log({res});
+            resolve(res);
+        });
+    });
+}
+
+async function clearTokenCache(tokenCache: TokenCache): Promise<TokenResponse | ErrorResponse> {
+    return new Promise((resolve, reject) => {
+        tokenCache.find({}, (err, tokens) => {
+            if (err) reject(err);
+            tokenCache.remove(tokens, err => {
+                if (err) reject(err);
+                resolve();
+            });
+        });
+    });
 }

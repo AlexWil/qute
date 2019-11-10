@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {Button} from 'react-bootstrap';
-import {refreshCreds, loginAndStoreCredentials} from '../helpers/credentialHelper';
+import {loadStoredCreds, loginAndStoreCredentials, refreshCredentials} from '../helpers/credentialHelper';
 import {listNamespaces, readFirstMessage, getQueueDetails} from '../helpers/sbHelper';
 
 function ListMessages(): JSX.Element {
@@ -10,7 +10,7 @@ function ListMessages(): JSX.Element {
 
     useEffect(() => {
         async function fetchData(): Promise<void> {
-            const newCreds = await refreshCreds();
+            const newCreds = await loadStoredCreds();
             const queueDetails = await getQueueDetails(newCreds, 'sandbox');
             setMessageCount(queueDetails.messageCount!);
         }
@@ -21,15 +21,21 @@ function ListMessages(): JSX.Element {
     });
 
     async function updateInfo(): Promise<void> {
-        const newCreds = await refreshCreds();
+        const newCreds = await loadStoredCreds();
         await listNamespaces(newCreds);
         const message = await readFirstMessage(newCreds);
-        setMessageBody(message.body);
-        setMessageId(message.messageId);
+        if (message) {
+            setMessageBody(message.body);
+            setMessageId(message.messageId);
+        }
     }
 
     async function beginAzureLogin(): Promise<void> {
         await loginAndStoreCredentials();
+    }
+
+    async function refreshToken(): Promise<void> {
+        await refreshCredentials();
     }
 
     return (
@@ -46,6 +52,10 @@ function ListMessages(): JSX.Element {
             <br />
             <Button variant="primary" onClick={beginAzureLogin}>
                 Login
+            </Button>
+            <br />
+            <Button variant="primary" onClick={refreshToken}>
+                Refresh Token
             </Button>
         </div>
     );
