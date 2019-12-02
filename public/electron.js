@@ -4,6 +4,7 @@ const {app, BrowserWindow} = require('electron');
 const isDev = require('electron-is-dev');
 // import * as path from 'path';
 
+//I am the renderer!
 function createWindow() {
     const mainWindow = new BrowserWindow({
         width: 800,
